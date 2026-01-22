@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2014-2026 Bjoern Kimminich & the OWASP Juice Shop contributors.
  * SPDX-License-Identifier: MIT
@@ -8,6 +9,7 @@ import { AllHtmlEntities as Entities } from 'html-entities'
 import config from 'config'
 import pug from 'pug'
 import fs from 'node:fs/promises'
+import sanitizeHtml from 'sanitize-html'
 
 import * as challengeUtils from '../lib/challengeUtils'
 import { themes } from '../views/themes/themes'
@@ -71,7 +73,8 @@ export function getUserProfile () {
     const theme = themes[themeKey] || themes['bluegrey-lightgreen']
 
     if (username) {
-      template = template.replace(/_username_/g, username)
+      const sanitizedUsername = sanitizeHtml(username)
+      template = template.replace(/_username_/g, sanitizedUsername)
     }
     template = template.replace(/_emailHash_/g, security.hash(user?.email))
     template = template.replace(/_title_/g, entities.encode(config.get<string>('application.name')))
